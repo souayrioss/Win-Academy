@@ -1,0 +1,263 @@
+/*CREATE database WinAcademy;
+use WinAcademy ;
+ create table Roles(
+	id_role int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+	role varchar(30) NOT NULL ,
+	);
+ create table Users(id_user int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+    uuid varchar(255) NOT NULL,
+    fullName varchar(80) NOT NULL,
+	email varchar(100) NOT NULL,
+	password varchar(50) NOT NULL,
+	tel varchar(80) NOT NULL,
+	role_id int FOREIGN KEY REFERENCES Roles(id_role) ,
+	);
+	create table Etudiants(
+	code varchar(50) NOT NULL PRIMARY KEY ,
+	annee_scolaire date ,
+	user_id int FOREIGN KEY REFERENCES Users(id_user) ,
+	);
+	create table Enseignants(
+	cin varchar(20) NOT NULL PRIMARY KEY ,
+	user_id int FOREIGN KEY REFERENCES Users(id_user) ,
+	);
+	create table Admins(
+	cin varchar(20) NOT NULL PRIMARY KEY ,
+	user_id int FOREIGN KEY REFERENCES Users(id_user) ,
+	);
+	GO
+
+	create table Colleges(id_college int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+    numero varchar(30) NOT NULL UNIQUE,
+	name varchar(40) NOT NULL,
+	city varchar(80) NOT NULL,
+	site_web varchar(255) NOT NULL,
+	); 
+	GO
+
+	create table Groups(id_group int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+	name varchar(50) NOT NULL,
+	nombre_etudiant int NOT NULL,
+	niveau varchar(25) NOT NULL,
+	);
+	
+	create table Departements(id_departement int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+	name varchar(20) NOT NULL ,
+	chef_departement int FOREIGN KEY REFERENCES  Users(id_user) ,
+	college_id int FOREIGN KEY REFERENCES Colleges(id_college) ,
+	);
+	GO
+
+	create table EnseignantGroups(
+		id_EnseignantGroup int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+		enseignant_id int FOREIGN KEY REFERENCES  Users(id_user) ,
+		college_id int FOREIGN KEY REFERENCES Colleges(id_college) ,
+		horaire date 
+	);
+	GO
+
+	create table Matieres(
+	id_matiere int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+	name varchar(20) NOT NULL 
+	);
+	create table Notes(
+	id_note int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+	note int ,
+	etudiant_id int FOREIGN KEY REFERENCES  Users(id_user) ,
+	matiere_id int FOREIGN KEY REFERENCES Matieres(id_matiere) 
+	);
+	GO ;
+
+	create table Sales(
+	id_sale int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+	numero varchar(30) NOT NULL UNIQUE ,
+	departement_id int FOREIGN KEY REFERENCES  Departements(id_departement) ,
+	matiere_id int FOREIGN KEY REFERENCES Matieres(id_matiere) 
+	);
+
+	
+	ALTER TABLE Enseignants
+	ADD departement_id int FOREIGN KEY REFERENCES  Departements(id_departement),
+	matiere_id int FOREIGN KEY REFERENCES Matieres(id_matiere) ;
+	GO;
+
+	
+	ALTER TABLE EnseignantGroups
+	DROP CONSTRAINT  college_id; 
+	
+	ALTER TABLE EnseignantGroups
+	ADD group_id int FOREIGN KEY REFERENCES Groups(id_group); 
+	
+	use WinAcademy ;
+	ALTER TABLE Etudiants
+	ADD group_id int FOREIGN KEY REFERENCES Groups(id_group);
+	
+	use WinAcademy ;
+	ALTER TABLE EnseignantGroups
+	ADD enseignant_id varchar(20) FOREIGN KEY REFERENCES  Enseignants(cin) ;
+	
+	ALTER TABLE EnseignantGroups
+	ADD etudiant_id varchar(50) FOREIGN KEY REFERENCES  Etudiants(code) ;
+	
+	ALTER TABLE Departements
+	ADD chef_departement varchar(20) FOREIGN KEY REFERENCES  Enseignants(cin) ;
+	
+	use WinAcademy ;
+	ALTER TABLE Etudiants
+	ADD college_id int FOREIGN KEY REFERENCES Colleges(id_college);
+	
+	
+	ALTER TABLE Notes
+	ADD etudiant_id varchar(50) FOREIGN KEY REFERENCES Etudiants(code);
+	
+	
+	create table Sales(
+	id_sale int NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+	numero varchar(30) NOT NULL UNIQUE ,
+	departement_id int FOREIGN KEY REFERENCES  Departements(id_departement) ,
+	matiere_id int FOREIGN KEY REFERENCES Matieres(id_matiere) 
+	);
+	 
+	 use WinAcademy ; 
+	INSERT INTO Roles (role)
+	VALUES ('Enseignants'),('Etudiants'),('Admins');
+	
+	INSERT INTO Users (uuid, fullName, email, password, tel,role_id)
+	VALUES ( 'b3976f3d18f6e61198c1cc27a718aa71', 'John Doe', 'azerty', '080808080',1);
+	
+	INSERT INTO Colleges(numero,name,city,site_web)
+	VALUES ('d18f6e61198', 'youcode', 'youssoufia','www.youcode.com/youssoufia'),
+	('sqd875dshs', 'youcode', 'safi','www.youcode.com/safi'),
+	('az33fsd93', '1337', 'ben guerir','www.1337.com/ben-guerir'),
+	('dk37xfh31', '1337', 'khouribga','www.1337.com/khouribga');
+	
+	INSERT INTO Departements(name,college_id)
+	VALUES ('Java',1),
+	('JavaScript',2),
+	('.Net',1),
+	('JavaScript',1),
+	('.Net',4),
+	('Cybersécurité',3),
+	('Cybersécurité',4),
+	('Big Data',3),
+	('Data Science',4),
+	('PHP',2);
+	
+	
+	INSERT INTO Matieres(name)
+	VALUES ('Java'),
+	('JavaScript'),
+	('C#'),
+	('PHP'),
+	('C++'),
+	('CSS');
+		
+
+	INSERT INTO Enseignants(cin,user_id,departement_id,matiere_id)
+	VALUES ('AZ123456',1,5,3);
+	
+	use WinAcademy ;
+	INSERT INTO Users (uuid, fullName, email, password, tel,role_id)
+	VALUES ( 'b3976f3d18f6e61198c1cc27a718aa71', 'John Doe', 'John.Doe@gmail.com', 'azerty', '080808080',1),
+	( '283e341b9ba2ddfa20ee4075fe3cdce5', 'Hanane Jabane', 'Hanane.Jabane@gmail.com', 'azerty', '080808080',1),
+	( 'a32d68fbb6ad5ad38d8977b0d4547cc4', 'Bouchra Doe', 'Bouchra.Doe@gmail.com', 'azerty', '080808080',1),
+	( '918bb5a21af3258bdd6215d0ff855b4e', 'Oussama Souayri', 'OUssama.Souayri@gmail.com', 'azerty', '080808080',2),
+	( '4a93c529df00752dc458c9ff2911ad6a', 'teach', 'teach@gmail.com', 'azerty', '080808080',2),
+	( 'eaae90d9e332c641b475c6810342919b', 'Simo', 'simo@gmail.com', 'azerty', '080808080',2),
+	( '572e184a28d268c5ad8e02462c3b945c', 'Mr test', 'test@gmail.com', 'azerty', '080808080',3);
+	
+	INSERT INTO Users (uuid, fullName, email, password, tel,role_id)
+	VALUES
+	( '572e184a28d268c5ad8e02462c3b945c', 'Mr test', 'test@gmail.com', 'azerty', '080808080',3);
+	
+	INSERT INTO Enseignants(cin,user_id,departement_id,matiere_id)
+	VALUES ('AZ123456',1,5,3),('BE89535335',2,4,4),('HO1231233',3,1,1);
+	
+	
+	INSERT INTO Groups(name,nombre_etudiant,niveau)
+	VALUES ('Poudlard',24,'2éme'),
+	('error404', 20,'1éme'),
+	('none', 21,'2éme');
+
+	ALTER TABLE Etudiants
+	ALTER COLUMN annee_scolaire varchar(30); 
+	
+	INSERT INTO Admins(cin,user_id)
+	VALUES ('SS278192',15);
+	
+	ALTER TABLE Etudiants
+	ALTER COLUMN annee_scolaire date;
+	
+	INSERT INTO Users (uuid, fullName, email, password, tel,role_id)
+	VALUES( '9023dec51ada15b3b71daa1811d1a0c0', 'Raouya ', 'raouya@gmail.com', 'azerty', '080808080',2);
+	INSERT INTO Etudiants(code,annee_scolaire,user_id,group_id,college_id)
+	VALUES ('RRE36676','2020/01/03',16,1,1);
+	
+	INSERT INTO Sales(numero, departement_id, matiere_id)
+	VALUES( '000',1,1),( '002',2,2),
+	('003',1,2),
+	('044',5,3),
+	('022',3,3),
+	( '001',9,4),
+	( '680',2,6),
+	( '006',1,2);
+	
+	
+	
+	use WinAcademy ;
+	ALTER TABLE EnseignantGroups
+	ALTER COLUMN horaire time;
+
+	
+	INSERT INTO EnseignantGroups(horaire, group_id, enseignant_id)
+	VALUES( '08:30:00',1,'HO1231233'),
+	( '09:00:00',2,'BE89535335'),
+	( '13:30:00',3,'AZ123456');
+
+	
+	INSERT INTO Notes(note, matiere_id, etudiant_id)
+	VALUES( '08:30:00',1,'HO1231233'),
+	( '09:00:00',2,'BE89535335'),
+	( '13:30:00',3,'AZ123456');
+	
+	ALTER TABLE Notes
+	ADD CHECK (note >=0 AND note <=20  ) ;
+	
+	INSERT INTO Notes(note, matiere_id, etudiant_id)
+	VALUES( 01,1,'KKZ3451276'),
+	( 16,2,'KKZ3451276'),
+	( 18,1,'NNE1097867'),
+	( 10.3,3,'KKZ3451276'),
+	( 16,4,'KKZ3451276'),
+	( 18.75,3,'NNE1097867'),
+	( 11,1,'RRE36676'),
+	( 12.7,2,'RRE36676'),
+	( 14.3,3,'RRE36676');
+
+	
+	select * from Users as u INNER JOIN Etudiants as e ON  u.id_user = e.user_id ;
+	select * from Users as u INNER JOIN Enseignants as e ON  u.id_user = e.user_id ;
+	select * from Users as u INNER JOIN Admins as a ON  u.id_user = a.user_id ;
+	
+	select u.fullName, m.name from Departements as d INNER JOIN Enseignants as e  ON d.id_departement = e.departement_id INNER JOIN Matieres as m ON m.id_matiere = e.matiere_id INNER JOIN Users as u ON  u.id_user = e.user_id;
+	
+	select  u.fullName, case 
+	when r.role = 'Enseignant' then 'est un Enseignant'
+	when r.role = 'Etudiant' then 'est un Etudiant'
+	else 'est un  Admin'
+	end
+	from Users as u INNER JOIN Roles as r ON u.role_id = r.id_role ;
+
+	select u.fullName, 'departement de '+ d.name from Departements as d INNER JOIN Enseignants as e  ON d.id_departement = e.departement_id INNER JOIN Matieres as m ON m.id_matiere = e.matiere_id INNER JOIN Users as u ON  u.id_user = e.user_id ;
+
+	select s.numero as num_sale,m.name as name_matiere,d.name as name_deparetement from Sales as s 
+	INNER JOIN Matieres as m ON  s.matiere_id = m.id_matiere 
+	INNER JOIN Enseignants as e ON  e.matiere_id = m.id_matiere 
+	INNER JOIN Departements as d ON  e.departement_id = d.id_departement;
+	*/
+	
+	select s.numero as num_sale,m.name as name_matiere,d.name as name_deparetement ,u.fullName as chef_departement  from Sales as s 
+	INNER JOIN Matieres as m ON  s.matiere_id = m.id_matiere 
+	INNER JOIN Enseignants as e ON  e.matiere_id = m.id_matiere 
+	INNER JOIN Departements as d ON  e.departement_id = d.id_departement 
+	INNER JOIN Users as u ON e.user_id = u.id_user;
