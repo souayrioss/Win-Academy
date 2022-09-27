@@ -1,0 +1,107 @@
+_____________________Creation de la base de donnée___________________________________________________________________
+
+CREATE DATABASE WinAcademy 
+
+_______________________Creation de la table matiére____________________________________________________________________________________________________________
+
+CREATE TABLE Matiere(
+	id INT PRIMARY KEY NOT NULL,
+ 	nom VARCHAR(100)
+ 	)
+______________________________________________________Creation de la table college_______________________________________________________________________________________________________________________
+
+CREATE TABLE College(id INT PRIMARY KEY NOT NULL,numero INT, nom VARCHAR(100), ville VARCHAR(50))
+
+
+
+
+_________Creation de la table groupe______________________________________________________________________________________________________________________________________________________________
+
+CREATE TABLE Groupe ( id INT PRIMARY KEY NOT NULL, nom VARCHAR(50), nombre_etudiant INT, niveau VARCHAR(30)
+)
+
+___________Création de la table Utilisateur____________________________________________________________________________________________________________________________________________________
+*
+CREATE TABLE Utilisateur ( id INT PRIMARY KEY NOT NULL, uuid VARCHAR(20), nom_complet VARCHAR(30), email VARCHAR(50), mot_de_pase VARCHAR(255), numero_tel VARCHAR(15), Role_id INT, FOREIGN KEY (Role_id) REFERENCES Role(id)
+)
+
+_________ Création de la table Etudiant_______________________________________________________________________________________________________________________________________
+CREATE TABLE Etudiant(
+annee_scolaire DATE, college_id INT, group_id INT , user_id INT, FOREIGN KEY(college_id) REFERENCES college(id), FOREIGN KEY (group_id) REFERENCES groupe(id),
+FOREIGN KEY (user_id) REFERENCES utilisateur(id)
+)
+
+_______Création de la table Note_____________________________________________________________________________________
+CREATE TABLE NOTE (
+id INT PRIMARY KEY NOT NULL, note FLOAT, etudiant_id INT, matiere_id INT, FOREIGN KEY (etudiant_id) REFERENCES etudiant(user_id)
+)
+_________Création de la table département______________________________________________________________________
+CREATE TABLE departement (
+id INT PRIMARY KEY NOT NULL, 
+    name VARCHAR(100),
+    chef_Departement VARCHAR(100),
+    college_id INT,
+    FOREIGN KEY (college_id) REFERENCES college(id)
+)
+____________Création de la table enseignant_____________________________________________________________________________________________
+CREATE TABLE enseignant(
+    id INT PRIMARY KEY NOT NULL,
+    departement_id INT,
+    matiere_id INT,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES utilisateur(id),
+    FOREIGN KEY (matiere_id) REFERENCES matiere(id),
+    FOREIGN KEY (departement_id) REFERENCES departement(id)
+)
+---------------------------Création de la table enseignantGroup ---------------------------------------------
+CREATE TABLE enseignantGroup(
+ enseignant_id INT,
+ groupe_id INT,
+ horaire TEXT,
+ FOREIGN KEY(enseignant_id) REFERENCES enseignant(user_id) ); 
+--------------------------Création de la table Admin----------------------------------------------------
+CREATE TABLE Admin
+(
+	id INT, 
+    FOREIGN KEY(id) REFERENCES utilisateur(id)
+)
+----------------------Création de la table Salle--------------------------------------------------------
+
+CREATE TABLE Salle
+(
+id INT PRIMARY KEY NOT NULL,
+matiere_id INT,
+departement_id INT,
+numero INT,
+FOREIGN KEY(matiere_id) REFERENCES matiere(id),
+FOREIGN KEY(departement_id) REFERENCES departement(id)
+
+ );
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#SELECT * FROM enseignant INNER JOIN departement ON enseignant.departement_id = departement.id; 
+#SELECT * FROM enseignant INNER JOIN departement ON enseignant.departement_id = departement.id INNER JOIN matiere ON enseignant.matiere_id=matiere.id;
+#SELECT * FROM enseignant INNER JOIN departement ON enseignant.departement_id = departement.id INNER JOIN matiere ON enseignant.matiere_id=matiere.id INNER JOIN users ON enseignant.user_id=users.id;
+#SELECT AVG(note) FROM note GROUP BY etudiant_id=4;
+
+la moyenne par matière
+#SELECT AVG(note) FROM note GROUP BY matiere_id;
+
+la moyenne par departement 
+#SELECT AVG(note) FROM note INNER JOIN matiere GROUP BY departementID;
+
+select moyene dun eleve
+#SELECT AVG(note) FROM note GROUP BY etudiant_id;
+
+select fich signalitique d'un etudiant
+#SELECT users.fullname , users.email , users.tel FROM etudiant INNER JOIN users ON etudiant.user_id = users.id;
+
+select fich signalitique d'un enseignant
+#SELECT users.fullname , users.email , users.tel FROM enseignant INNER JOIN users ON enseignant.user_id = users.id;
+
+
+
+#*SELECT AVG(note) , fullname.users , nom.matiere FROM note GROUP BY matiere_id INNER JOIN etudiant ON note.etudiant_id=users.id INNER JOIN matiere ON note.matiere_id = matiere.id ;
