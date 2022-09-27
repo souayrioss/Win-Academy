@@ -1,0 +1,321 @@
+_____________________Creation de la base de donnée___________________________________________________________________
+
+CREATE DATABASE WinAcademy
+
+_______________________Creation de la table matiére____________________________________________________________________________________________________________
+
+CREATE TABLE Matiere(
+	id INT PRIMARY KEY NOT NULL,
+ 	nom VARCHAR(100)
+ 	)
+
+
+______________________________________________________Creation de la table college_______________________________________________________________________________________________________________________
+
+CREATE TABLE College(id INT PRIMARY KEY NOT NULL,numero INT, nom VARCHAR(100), ville VARCHAR(50))
+
+
+
+
+_________Creation de la table groupe______________________________________________________________________________________________________________________________________________________________
+
+CREATE TABLE Groupe ( id INT PRIMARY KEY NOT NULL, nom VARCHAR(50), nombre_etudiant INT, niveau VARCHAR(30)
+)
+
+___________Création de la table Utilisateur____________________________________________________________________________________________________________________________________________________
+
+CREATE TABLE Utilisateur ( id INT PRIMARY KEY NOT NULL, uuid VARCHAR(20), nom_complet VARCHAR(30), email VARCHAR(50), mot_de_pase VARCHAR(255), numero_tel VARCHAR(15), Role_id INT, FOREIGN KEY (Role_id) REFERENCES Role(id)
+)
+
+_________ Création de la table Etudiant_______________________________________________________________________________________________________________________________________
+CREATE TABLE Etudiant(
+annee_scolaire DATE, college_id INT, group_id INT , user_id INT, FOREIGN KEY(college_id) REFERENCES college(id), FOREIGN KEY (group_id) REFERENCES groupe(id),
+FOREIGN KEY (user_id) REFERENCES utilisateur(id)
+)
+
+_______Création de la table Note_____________________________________________________________________________________
+CREATE TABLE NOTE (
+id INT PRIMARY KEY NOT NULL, note FLOAT, etudiant_id INT, matiere_id INT, FOREIGN KEY (etudiant_id) REFERENCES etudiant(user_id)
+)
+_________Création de la table département______________________________________________________________________
+CREATE TABLE departement (
+id INT PRIMARY KEY NOT NULL, 
+    name VARCHAR(100),
+    chef_Departement VARCHAR(100),
+    college_id INT,
+    FOREIGN KEY (college_id) REFERENCES college(id)
+)
+____________Création de la table enseignant_____________________________________________________________________________________________
+CREATE TABLE enseignant(
+id INT PRIMARY KEY NOT NULL,
+    departement_id INT,
+    matiere_id INT,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES utilisateur(id),
+     FOREIGN KEY (matiere_id) REFERENCES matiere(id),
+     FOREIGN KEY (departement_id) REFERENCES departement(id)
+)
+---------------------------Création de la table enseignantGroup ---------------------------------------------
+CREATE TABLE enseignantGroup(
+ enseignant_id INT,
+ groupe_id INT,
+ horaire TEXT,
+ FOREIGN KEY(enseignant_id) REFERENCES enseignant(user_id) );
+--------------------------Création de la table Admin----------------------------------------------------
+CREATE TABLE Admin
+(
+	id INT, 
+    FOREIGN KEY(id) REFERENCES utilisateur(id)
+)
+----------------------Création de la table Salle--------------------------------------------------------
+
+CREATE TABLE Salle
+(
+id INT PRIMARY KEY NOT NULL,
+matiere_id INT,
+departement_id INT,
+numero INT,
+FOREIGN KEY(matiere_id) REFERENCES matiere(id),
+FOREIGN KEY(departement_id) REFERENCES departement(id),
+
+ );
+____________________________________________________________________________________
+ALTER TABLE departement 
+ADD chef_departement_id INT NOT NULL;
+ALTER TABLE departement
+ADD CONSTRAINT chef_departement_id FOREIGN KEY (chef_departement_id) REFERENCES enseignant (user_id);
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO Role VALUES(2,etudiant)
+
+
+__________________________________________
+ALTER TABLE etudiant MODIFY user_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT FIRST;
+ALTER TABLE note MODIFY id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT FIRST;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*INSERSION*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*
+
+--------------insersion role--------------------------------
+INSERT INTO role VALUES(1,'enseignant');
+INSERT INTO role VALUES(2,'admin');
+INSERT INTO role VALUES(3,'etudiant');
+
+---------------insertion user---------------------------------
+INSERT INTO utilisateur VALUES(1,2000,'Nouhaila ELAALAMI','nouhaila@gmail.com','123456','0628578248',2);
+INSERT INTO utilisateur VALUES(2,2000,'hiba ELAALAMI','hiba@gmail.com','123456','0631449953',1);
+INSERT INTO utilisateur VALUES(3,2000,'sara ELAALAMI','sara@gmail.com','123456','063100000',3);
+INSERT INTO utilisateur VALUES(4,8000,'salma ELAALAMI','salma@gmail.com','123456','0899999999',1);
+INSERT INTO utilisateur VALUES(5,1500,'zakaria ELAALAMI','zakaria@gmail.com','123456','063100000',1);
+INSERT INTO utilisateur VALUES(6,3500,'ali ELAALAMI','ali@gmail.com','123456','0899999999',1);
+
+------------------Insertion admin-------------------------------------
+INSERT INTO admin VALUES(1);
+
+-------------------Insersion college--------------------------------
+INSERT INTO college VALUES(1,30,'bentoumert','marrakech');
+INSERT INTO college VALUES(2,31,'med 5','essaouira');
+ 
+---------------------Insertion groupe-----------------------
+INSERT INTO groupe VALUES(1,'groupe namek',30,'1ere A');
+INSERT INTO groupe VALUES(2,'groupe error',35,'2eme A');
+INSERT INTO groupe VALUES(3,'groupe J&A',25,'3 eme A');
+
+----------------Insertion etudiant-------------------------
+ INSERT INTO etudiant VALUES ('2022-09-20' ,1,1,3);
+
+---------------Insertion departement------------------
+INSERT INTO departement VALUES(1,'math_dep',1,NULL)
+-----------------Insertion matiere------------------
+INSERT INTO matiere VALUES(1,'math');
+INSERT INTO matiere VALUES(2,'PC');
+-----------------Insertion enseignant----------------------
+INSERT INTO enseignant VALUES(1,1,2);
+INSERT INTO enseignant VALUES(2,2,4);
+------------------Salle
+INSERT INTO salle VALUES(2,1,1,33);
+INSERT INTO salle VALUES(1,1,1,30);
+-----------------EnseignantGroupe----------------
+INSERT INTO enseignantgroup VALUES(2,1,'lundi:8->12, Mardi: 14h->17h, Vendredi:15->19h');
+INSERT INTO enseignantgroup VALUES(2,2,'lundi:8->12, Mardi: 14h->17h, Mercredi:15->19h');
+-----------------------Note--------------
+INSERT INTO note VALUES(1,'19',3,1);
+INSERT INTO note VALUES(2,'15',3,2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------FILTRAGE------------------------------------------------------------------------------------------
+1---------------------------------------------------------------------Selectionner les informations d'un admin-----------------------------
+
+ SELECT * FROM utilisateur INNER JOIN admin ON utilisateur.id = admin.id;
+
+2---------------------------------------------------------------------Selectionner les informations de tous les enseignant----------------------------------------
+SELECT nom_complet, email, numero_tel, Role, name, nom as nom_matiere FROM utilisateur
+ INNER JOIN enseignant ON utilisateur.id = enseignant.user_id 
+ INNER JOIN role ON utilisateur.Role_id=role.id 
+ INNER JOIN departement ON departement.id=enseignant.departement_id 
+ INNER JOIN matiere ON matiere.id=enseignant.matiere_id;
+
+3---------------------------------------------------------------------------------------------Selectionner les informations pour la fiche signalitique d'enseignant
+
+SELECT nom_complet, email, numero_tel FROM utilisateur INNER JOIN enseignant ON utilisateur.id = enseignant.user_id;
+_____________________________________________________________________________________________________________________________________________________________________________________
+
+4-----------------------------------------------------------------------Selectionner les informations de l'étudiant-----------------------------------
+
+SELECT nom_complet, email, numero_tel, Role, college.nom AS nom_college, groupe.nom AS nom_groupe,  niveau, ville, annee_scolaire FROM utilisateur 
+  INNER JOIN etudiant ON utilisateur.id = etudiant.user_id 
+  INNER JOIN role ON utilisateur.Role_id=role.id 
+  INNER JOIN college ON college.id=etudiant.college_id
+  INNER JOIN groupe ON groupe.id=etudiant.group_id;
+5-------------------------------------------------------------------------------------Selectionner les informations pour la fiche signalitique d'etudiant
+
+SELECT nom_complet, email, numero_tel FROM utilisateur INNER JOIN etudiant ON utilisateur.id = etudiant.user_id;
+
+
+6------------------------------------------------------------------------------------------------------------------------Selectionner les etudiants selon groupe
+SELECT nom_complet, email, numero_tel, Role, college.nom AS nom_college, groupe.nom AS nom_groupe,  niveau, ville, annee_scolaire FROM utilisateur 
+  INNER JOIN etudiant ON utilisateur.id = etudiant.user_id 
+  INNER JOIN role ON utilisateur.Role_id=role.id 
+  INNER JOIN college ON college.id=etudiant.college_id
+  INNER JOIN groupe ON groupe.id=etudiant.group_id 
+  WHERE groupe.nom='groupe error';
+
+7---------------------------------------------------------------------------------------------------Selectionner Les étudiants selon college
+SELECT nom_complet, email, numero_tel, Role, college.nom AS nom_college, groupe.nom AS nom_groupe,  niveau, ville, annee_scolaire FROM utilisateur 
+  INNER JOIN etudiant ON utilisateur.id = etudiant.user_id 
+  INNER JOIN role ON utilisateur.Role_id=role.id 
+  INNER JOIN college ON college.id=etudiant.college_id
+  INNER JOIN groupe ON groupe.id=etudiant.group_id 
+  WHERE college.nom='med 5';
+
+8------------------------------------------------------------------------------------------------Selectionner le nombre des étudiants dans chaque college
+SELECT COUNT(*) AS nombre_des_etudiants ,nom AS nom_college FROM etudiant
+INNER JOIN college ON college.id=etudiant.college_id
+GROUP BY group_id;
+
+9---------------------------------------------------------------------------------------------Selectionner la somme des étudiants selon l'effectif des groupes
+
+SELECT SUM(nombre_etudiant) FROM groupe;
+
+10----------------------------------------------------------------------------------------------Selectionner les plus hotes notes selon les matiéres
+SELECT Max(note) ,nom AS matiere FROM note 
+INNER JOIN matiere ON matiere.id=note.matiere_id 
+GROUP BY matiere_id;
+
+11----------------------------------------------------------------------------------------------Selectionner les plus basse notes selon les matiéres
+
+SELECT MIN(note) ,nom AS matiere FROM note 
+INNER JOIN matiere ON matiere.id=note.matiere_id 
+GROUP BY matiere_id;
+
+
+12------------------------------------------------------------------------------------------------Afficher la moyenne par matiere
+
+SELECT AVG(note) AS moyenne_matiere, nom AS nom_matiere FROM note 
+INNER JOIN matiere ON matiere.id=note.matiere_id 
+GROUP BY matiere_id;
+13--------------------------------------------------------------------------------------------------Afficher la note générale de chaque matiére pour chaque étudiant
+
+SELECT AVG(note) AS moyenne_matiere, nom AS nom_matiere, nom_complet FROM note,utilisateur,matiere 
+WHERE utilisateur.id=note.etudiant_id AND matiere.id=note.matiere_id 
+GROUP BY etudiant_id, matiere_id;
+
+14-------------------------------------------------------------------------------------------------Selectionner les notes de tous les etudiants
+
+SELECT note AS moyenne_matiere, nom AS nom_matiere, nom_complet FROM note 
+INNER JOIN matiere ON matiere.id=note.matiere_id 
+INNER JOIN utilisateur ON utilisateur.id=note.etudiant_id;
+
+15--------------------------------------------------------------------------------------------------calculer la moyenne générale de chaque étudiant
+
+SELECT SUM(note)/ COUNT(matiere.id) AS moyenne_generale, nom_complet FROM note 
+INNER JOIN matiere ON matiere.id=note.matiere_id 
+INNER JOIN utilisateur ON utilisateur.id=note.etudiant_id GROUP BY etudiant_id;
+
+16--------------------------------------------------------------------------------------------------Selectionner les salles 
+
+SELECT numero , nom AS nom_matiere, name AS name_departement FROM salle 
+INNER JOIN departement ON departement.id=salle.departement_id 
+INNER JOIN matiere ON matiere.id=salle.matiere_id;
+
+17--------------------------------------------------------------------------------------------------Selectionner les chefs des départements 
+SELECT name, nom_complet FROM departement INNER JOIN utilisateur ON utilisateur.id=departement.chef_departement_id;
+
+18-------------------------------------------------------------------------------------
+
+Sélectionner les enseignants qui appartient la méme département
+====================================================
+SELECT nom_complet, email, numero_tel, Role, name as nom_departement, nom as nom_matiere FROM utilisateur
+ INNER JOIN enseignant ON utilisateur.id = enseignant.user_id 
+ INNER JOIN role ON utilisateur.Role_id=role.id 
+ INNER JOIN departement ON departement.id=enseignant.departement_id 
+ INNER JOIN matiere ON matiere.id=enseignant.matiere_id
+WHERE  name='departement_A';
+______________________________________________________
+
+fiche pour chaque enseignant et chaque etudiant
+===================================================
+SELECT nom_complet, email, numero_tel FROM utilisateur INNER JOIN etudiant ON utilisateur.id = etudiant.user_id
+WHERE nom_complet='sara ELAALAMI'
+______________________________________________________
+
+requete pour des etudiants pour chaque college OK
+______________________________________________________
+
+selectionner les étudiants selon le niveau
+=====================================================
+SELECT nom_complet, email, numero_tel, Role, college.nom AS nom_college, groupe.nom AS nom_groupe,  niveau, ville, annee_scolaire FROM utilisateur 
+  INNER JOIN etudiant ON utilisateur.id = etudiant.user_id 
+  INNER JOIN role ON utilisateur.Role_id=role.id 
+  INNER JOIN college ON college.id=etudiant.college_id
+  INNER JOIN groupe ON groupe.id=etudiant.group_id
+WHERE niveau='2eme A'
+_____________________________________________________
+
+Selectionner les plus hotes notes selon les matiéres avec nom étudiant
+=====================================================
+SELECT Max(note) ,nom AS matiere, nom_complet as nom_d_etudiant FROM note 
+INNER JOIN matiere ON matiere.id=note.matiere_id 
+INNER JOIN utilisateur ON note.etudiant_id=utilisateur.id
+GROUP BY matiere_id;
+
+
+
+
+
+
+
+
+
