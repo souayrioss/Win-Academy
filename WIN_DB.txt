@@ -254,10 +254,269 @@ use WinAcademy ;
 	INNER JOIN Matieres as m ON  s.matiere_id = m.id_matiere 
 	INNER JOIN Enseignants as e ON  e.matiere_id = m.id_matiere 
 	INNER JOIN Departements as d ON  e.departement_id = d.id_departement;
-	*/
 	
 	select s.numero as num_sale,m.name as name_matiere,d.name as name_deparetement ,u.fullName as chef_departement  from Sales as s 
 	INNER JOIN Matieres as m ON  s.matiere_id = m.id_matiere 
 	INNER JOIN Enseignants as e ON  e.matiere_id = m.id_matiere 
 	INNER JOIN Departements as d ON  e.departement_id = d.id_departement 
 	INNER JOIN Users as u ON e.user_id = u.id_user;
+	
+	SELECT u.fullName, n.note AS note_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+INNER JOIN Etudiants as e ON e.code=n.etudiant_id
+INNER JOIN Users as u ON u.id_user=e.user_id
+GROUP BY matiere_id ,m.name,u.fullName,n.note;
+
+SELECT  AVG(n.note) AS moyenne_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+GROUP BY matiere_id ,m.name;
+
+SELECT  MAX(n.note) AS moyenne_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+GROUP BY matiere_id ,m.name;
+
+SELECT  MIN(n.note) AS moyenne_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+GROUP BY matiere_id ,m.name;
+
+SELECT m.name,  AVG(n.note) AS moyenne_matiere,u.fullName ,
+case when AVG(n.note) between 10 and 11.99999999 then 'passable'
+when AVG(n.note) between 12 and 13.99999999 then 'assze bien'
+when AVG(n.note) between 14 and 15.99999999 then 'bien'
+when AVG(n.note) between 16 and 17.99999999 then 'tres bien'
+when AVG(n.note) between 18 and 20 then 'excellent'
+else  'not admis'
+end as mention
+FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+INNER JOIN Etudiants as e ON e.code=n.etudiant_id
+INNER JOIN Users as u ON u.id_user=e.user_id
+GROUP BY m.name,u.fullName;
+
+select u.fullName , m.name from Notes as n 
+INNER JOIN Matieres as m ON  m.id_matiere = n.matiere_id 
+INNER JOIN  Etudiants as e ON e.code = n.etudiant_id 
+INNER JOIN Users as u ON u.id_user = e.user_id 
+Order By m.name
+
+SELECT u.fullName, u.email, u.tel, r.role, c.name AS nom_college, g.name AS nom_groupe,  niveau, c.city, annee_scolaire FROM Users as u 
+	INNER JOIN Etudiants as e ON e.user_id = u.id_user 
+  INNER JOIN Roles as r ON u.role_id = r.id_role
+  INNER JOIN Colleges as c ON c.id_college=e.college_id
+  INNER JOIN Groups as g ON g.id_group=e.group_id 
+  WHERE c.name='youcode';
+
+  SELECT COUNT(*) AS nombre_des_etudiants ,name AS nom_college FROM Etudiants as e
+INNER JOIN Colleges as c ON c.id_college= e.college_id
+GROUP BY name;
+
+SELECT AVG(n.note) AS moyenne_matiere, m.name AS nom_matiere, u.fullName FROM Notes as n 
+INNER JOIN Matieres as m ON m.id_matiere = n.matiere_id 
+INNER JOIN Etudiants as e ON e.code=n.etudiant_id
+INNER JOIN Users as u ON u.id_user=e.user_id 
+GROUP BY m.name, u.fullName;
+
+
+SELECT AVG(n.note) AS moyenne_matiere, m.name AS nom_matiere FROM Notes as n
+INNER JOIN Matieres as m ON m.id_matiere= n.matiere_id 
+GROUP BY m.name;
+
+SELECT SUM(nombre_etudiant),name FROM Groups
+Group by name;
+
+
+select d.name , u.fullName from Departements as d INNER JOIN Enseignants as e ON e.departement_id = d.id_departement
+INNER JOIN Users as u ON u.id_user = e.user_id ;
+
+select m.name,note ,fullName from Notes as n INNER JOIN Etudiants as e ON n.etudiant_id = e.code
+INNER JOIN Matieres as m ON m.id_matiere = n.matiere_id 
+INNER JOIN Users as u ON u.id_user = e.user_id 
+where e.code = 'KKZ3451276';
+
+select fullName,email,tel,role,annee_scolaire,g.city,g.name,g.site_web from Users as u INNER JOIN Etudiants as e ON e.user_id = u.id_user 
+INNER JOIN Roles as  r ON r.id_role = u.role_id
+INNER JOIN Colleges as g ON  g.id_college = e.college_id 
+where e.code = 'KKZ3451276';
+
+	use WinAcademy ;
+	INSERT INTO Users (uuid, fullName, email, password, tel,role_id)
+	VALUES ( 'b3976f3d18f6e61198c1cc27a718aa71', 'John Doe', 'John.Doe@gmail.com', 'azerty', '080808080',1),
+	( '283e341b9ba2ddfa20ee4075fe3cdce5', 'Hanane Jabane', 'Hanane.Jabane@gmail.com', 'azerty', '080808080',1),
+	( 'a32d68fbb6ad5ad38d8977b0d4547cc4', 'Bouchra Doe', 'Bouchra.Doe@gmail.com', 'azerty', '080808080',1),
+	( '918bb5a21af3258bdd6215d0ff855b4e', 'Oussama Souayri', 'OUssama.Souayri@gmail.com', 'azerty', '080808080',2),
+	( '4a93c529df00752dc458c9ff2911ad6a', 'teach', 'teach@gmail.com', 'azerty', '080808080',2),
+	( 'eaae90d9e332c641b475c6810342919b', 'Simo', 'simo@gmail.com', 'azerty', '080808080',2),
+	( '572e184a28d268c5ad8e02462c3b945c', 'Mr test', 'test@gmail.com', 'azerty', '080808080',3);
+	
+	INSERT INTO Users (uuid, fullName, email, password, tel,role_id)
+	VALUES
+	( '572e184a28d268c5ad8e02462c3b945c', 'Mr test', 'test@gmail.com', 'azerty', '080808080',3);
+	
+	INSERT INTO Enseignants(cin,user_id,departement_id,matiere_id)
+	VALUES ('AZ123456',1,5,3),('BE89535335',2,4,4),('HO1231233',3,1,1);
+	
+	
+	INSERT INTO Groups(name,nombre_etudiant,niveau)
+	VALUES ('Poudlard',24,'2éme'),
+	('error404', 20,'1éme'),
+	('none', 21,'2éme');
+
+	ALTER TABLE Etudiants
+	ALTER COLUMN annee_scolaire varchar(30); 
+	
+	INSERT INTO Admins(cin,user_id)
+	VALUES ('SS278192',15);
+	
+	ALTER TABLE Etudiants
+	ALTER COLUMN annee_scolaire date;
+	
+	INSERT INTO Users (uuid, fullName, email, password, tel,role_id)
+	VALUES( '9023dec51ada15b3b71daa1811d1a0c0', 'Raouya ', 'raouya@gmail.com', 'azerty', '080808080',2);
+	INSERT INTO Etudiants(code,annee_scolaire,user_id,group_id,college_id)
+	VALUES ('RRE36676','2020/01/03',16,1,1);
+	
+	INSERT INTO Sales(numero, departement_id, matiere_id)
+	VALUES( '000',1,1),( '002',2,2),
+	('003',1,2),
+	('044',5,3),
+	('022',3,3),
+	( '001',9,4),
+	( '680',2,6),
+	( '006',1,2);
+	
+	
+	
+	use WinAcademy ;
+	ALTER TABLE EnseignantGroups
+	ALTER COLUMN horaire time;
+
+	
+	INSERT INTO EnseignantGroups(horaire, group_id, enseignant_id)
+	VALUES( '08:30:00',1,'HO1231233'),
+	( '09:00:00',2,'BE89535335'),
+	( '13:30:00',3,'AZ123456');
+
+	
+	INSERT INTO Notes(note, matiere_id, etudiant_id)
+	VALUES( '08:30:00',1,'HO1231233'),
+	( '09:00:00',2,'BE89535335'),
+	( '13:30:00',3,'AZ123456');
+	
+	ALTER TABLE Notes
+	ADD CHECK (note >=0 AND note <=20  ) ;
+	
+	INSERT INTO Notes(note, matiere_id, etudiant_id)
+	VALUES( 01,1,'KKZ3451276'),
+	( 16,2,'KKZ3451276'),
+	( 18,1,'NNE1097867'),
+	( 10.3,3,'KKZ3451276'),
+	( 16,4,'KKZ3451276'),
+	( 18.75,3,'NNE1097867'),
+	( 11,1,'RRE36676'),
+	( 12.7,2,'RRE36676'),
+	( 14.3,3,'RRE36676');
+
+	
+	select * from Users as u INNER JOIN Etudiants as e ON  u.id_user = e.user_id ;
+	select * from Users as u INNER JOIN Enseignants as e ON  u.id_user = e.user_id ;
+	select * from Users as u INNER JOIN Admins as a ON  u.id_user = a.user_id ;
+	
+	select u.fullName, m.name from Departements as d INNER JOIN Enseignants as e  ON d.id_departement = e.departement_id INNER JOIN Matieres as m ON m.id_matiere = e.matiere_id INNER JOIN Users as u ON  u.id_user = e.user_id;
+	
+	select  u.fullName, case 
+	when r.role = 'Enseignant' then 'est un Enseignant'
+	when r.role = 'Etudiant' then 'est un Etudiant'
+	else 'est un  Admin'
+	end
+	from Users as u INNER JOIN Roles as r ON u.role_id = r.id_role ;
+
+	select u.fullName, 'departement de '+ d.name from Departements as d INNER JOIN Enseignants as e  ON d.id_departement = e.departement_id INNER JOIN Matieres as m ON m.id_matiere = e.matiere_id INNER JOIN Users as u ON  u.id_user = e.user_id ;
+
+	select s.numero as num_sale,m.name as name_matiere,d.name as name_deparetement from Sales as s 
+	INNER JOIN Matieres as m ON  s.matiere_id = m.id_matiere 
+	INNER JOIN Enseignants as e ON  e.matiere_id = m.id_matiere 
+	INNER JOIN Departements as d ON  e.departement_id = d.id_departement;
+	
+	select s.numero as num_sale,m.name as name_matiere,d.name as name_deparetement ,u.fullName as chef_departement  from Sales as s 
+	INNER JOIN Matieres as m ON  s.matiere_id = m.id_matiere 
+	INNER JOIN Enseignants as e ON  e.matiere_id = m.id_matiere 
+	INNER JOIN Departements as d ON  e.departement_id = d.id_departement 
+	INNER JOIN Users as u ON e.user_id = u.id_user;
+	
+	SELECT u.fullName, n.note AS note_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+INNER JOIN Etudiants as e ON e.code=n.etudiant_id
+INNER JOIN Users as u ON u.id_user=e.user_id
+GROUP BY matiere_id ,m.name,u.fullName,n.note;
+
+SELECT  AVG(n.note) AS moyenne_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+GROUP BY matiere_id ,m.name;
+
+SELECT  MAX(n.note) AS moyenne_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+GROUP BY matiere_id ,m.name;
+
+SELECT  MIN(n.note) AS moyenne_matiere, m.name AS nom_matiere  FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+GROUP BY matiere_id ,m.name;
+
+SELECT m.name,  AVG(n.note) AS moyenne_matiere,u.fullName ,
+case when AVG(n.note) between 10 and 11.99999999 then 'passable'
+when AVG(n.note) between 12 and 13.99999999 then 'assze bien'
+when AVG(n.note) between 14 and 15.99999999 then 'bien'
+when AVG(n.note) between 16 and 17.99999999 then 'tres bien'
+when AVG(n.note) between 18 and 20 then 'excellent'
+else  'not admis'
+end as mention
+FROM Notes As n
+INNER JOIN Matieres as m ON m.id_matiere=n.matiere_id 
+INNER JOIN Etudiants as e ON e.code=n.etudiant_id
+INNER JOIN Users as u ON u.id_user=e.user_id
+GROUP BY m.name,u.fullName;
+
+select u.fullName , m.name from Notes as n 
+INNER JOIN Matieres as m ON  m.id_matiere = n.matiere_id 
+INNER JOIN  Etudiants as e ON e.code = n.etudiant_id 
+INNER JOIN Users as u ON u.id_user = e.user_id 
+Order By m.name
+
+SELECT u.fullName, u.email, u.tel, r.role, c.name AS nom_college, g.name AS nom_groupe,  niveau, c.city, annee_scolaire FROM Users as u 
+	INNER JOIN Etudiants as e ON e.user_id = u.id_user 
+  INNER JOIN Roles as r ON u.role_id = r.id_role
+  INNER JOIN Colleges as c ON c.id_college=e.college_id
+  INNER JOIN Groups as g ON g.id_group=e.group_id 
+  WHERE c.name='youcode';
+
+  SELECT COUNT(*) AS nombre_des_etudiants ,name AS nom_college FROM Etudiants as e
+INNER JOIN Colleges as c ON c.id_college= e.college_id
+GROUP BY name;
+
+SELECT AVG(n.note) AS moyenne_matiere, m.name AS nom_matiere, u.fullName FROM Notes as n 
+INNER JOIN Matieres as m ON m.id_matiere = n.matiere_id 
+INNER JOIN Etudiants as e ON e.code=n.etudiant_id
+INNER JOIN Users as u ON u.id_user=e.user_id 
+GROUP BY m.name, u.fullName;
+
+
+SELECT AVG(n.note) AS moyenne_matiere, m.name AS nom_matiere FROM Notes as n
+INNER JOIN Matieres as m ON m.id_matiere= n.matiere_id 
+GROUP BY m.name;
+
+SELECT SUM(nombre_etudiant),name FROM Groups
+Group by name;
+
+
+select d.name , u.fullName from Departements as d INNER JOIN Enseignants as e ON e.departement_id = d.id_departement
+INNER JOIN Users as u ON u.id_user = e.user_id ;
+
+select m.name,note ,fullName from Notes as n INNER JOIN Etudiants as e ON n.etudiant_id = e.code
+INNER JOIN Matieres as m ON m.id_matiere = n.matiere_id 
+INNER JOIN Users as u ON u.id_user = e.user_id 
+where e.code = 'KKZ3451276';
+
+select fullName,email,tel,role,annee_scolaire,g.city,g.name,g.site_web from Users as u INNER JOIN Etudiants as e ON e.user_id = u.id_user 
+INNER JOIN Roles as  r ON r.id_role = u.role_id
+INNER JOIN Colleges as g ON  g.id_college = e.college_id 
+where e.code = 'KKZ3451276';
+*/
