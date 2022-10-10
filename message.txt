@@ -10,7 +10,7 @@ CREATE TABLE Matiere(
  	)
 ______________________________________________________Creation de la table college_______________________________________________________________________________________________________________________
 
-CREATE TABLE College(id INT PRIMARY KEY NOT NULL,numero INT, nom VARCHAR(100), ville VARCHAR(50))
+CREATE TABLE College(id INT  PRIMARY KEY NOT NULL,numero INT, nom VARCHAR(100), ville VARCHAR(50))
 
 
 
