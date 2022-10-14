@@ -30,23 +30,54 @@ public class Main {
             for (int j = 0; j < 2 * i + 1; j++) {
                 int nr = 2+random.nextInt(2);
                 symboles.append(syb.repeat(nr)+guir);
+                if(symboles.length() >= Math.pow(rows, 2)){
+                    break;
+                }
+            }
+            if(symboles.length() >= Math.pow(rows, 2)){
+                break;
             }
         }
-        for (int i = 0; i < rows; i++){
-            for (int j = 0; j < 2 * i + 1; j++) {
-                int nr = 2+random.nextInt(2);
-                symboles1.append(syb);
+        System.out.println(symboles);
+        System.out.println("\n\n");
+        int x=0;
+        for (int i = 1; i <= rows; i++) {
+
+            // loop to print the number of spaces before the star
+            for (int j = rows; j >= i; j--) {
+                System.out.print(" ");
             }
+
+            // loop to print the number of stars in each row
+            for (int j = 1; j <= i; j++) {
+                System.out.print(symboles.charAt(x) + " ");
+                x++;
+            }
+
+            // for new line after printing each row
+            System.out.println();
+
         }
-        System.out.println(symboles.length());
-        System.out.println(symboles1.length());
-
-
-
-
+        afficherTronc(rows);
         //int finalRows = rows;
         //symboles.forEach((n) -> System.out.println(String.join("", Collections.nCopies(finalRows-symboles.indexOf(n)-1, " ")) + n));
 
+    }
+    static void afficherTronc(int nbLigne) {
+        int largeur;
+        int hauteur;
+
+        largeur = (nbLigne*2 - 1) / 5;
+        if (largeur % 2 == 0)
+            ++largeur;
+        hauteur = Math.max(1, nbLigne/3);
+        for (int i = 0; i < hauteur; ++i) {
+            for (int j = 0; j < nbLigne /1.2; ++j)
+                System.out.print(" ");
+            for (int j = 0; j < largeur; ++j)
+                System.out.print("|");
+            System.out.println();
+        }
     }
 
 
@@ -95,8 +126,7 @@ int rows ;
                 System.out.print("|");
             System.out.println();
         }
-    }*/
-
+    }
 
     ///////////////////////////////////////////
 ///////////////////////////////////////////
